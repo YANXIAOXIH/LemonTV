@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { API_CONFIG } from '@/lib/config';
 
+export const runtime = 'edge';
+
 // 转换外部API数据格式到内部格式 - 分类热搜API直接使用id作为视频ID
 function transformExternalData(externalItem: any) {
   return {

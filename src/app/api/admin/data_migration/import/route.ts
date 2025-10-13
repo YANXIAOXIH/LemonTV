@@ -1,17 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,no-console */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { promisify } from 'util';
-import { gunzip } from 'zlib';
+/* import { promisify } from 'util'; */
+/* import { gunzip } from 'zlib'; */
+
+import { ungzip } from 'pako';
 
 import { getAuthInfoFromCookie } from '@/lib/auth';
 import { configSelfCheck, setCachedConfig } from '@/lib/config';
 import { SimpleCrypto } from '@/lib/crypto';
 import { db } from '@/lib/db';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
-const gunzipAsync = promisify(gunzip);
+/* const gunzipAsync = promisify(gunzip); */
 
 export async function POST(req: NextRequest) {
   try {
@@ -60,9 +62,17 @@ export async function POST(req: NextRequest) {
     }
 
     // 解压缩数据
-    const compressedBuffer = Buffer.from(decryptedData, 'base64');
-    const decompressedBuffer = await gunzipAsync(compressedBuffer);
-    const decompressedData = decompressedBuffer.toString();
+    //const compressedBuffer = Buffer.from(decryptedData, 'base64');
+    //const decompressedBuffer = await gunzipAsync(compressedBuffer);
+    //const decompressedData = decompressedBuffer.toString();
+    const compressedString = atob(decryptedData);
+    const compressedBuffer = new Uint8Array(compressedString.length);
+    for (let i = 0; i < compressedString.length; i++) {
+      compressedBuffer[i] = compressedString.charCodeAt(i);
+    }
+
+    const decompressedBuffer = ungzip(compressedBuffer); // pako.ungzip 返回 Uint8Array
+    const decompressedData = new TextDecoder().decode(decompressedBuffer); // 将 Uint8Array 转换回 JSON 字符串
 
     // 解析JSON数据
     let importData: any;

@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 function buildCorsHeaders(contentType?: string, extra?: Record<string, string>) {
   const headers = new Headers();

@@ -3,6 +3,8 @@ import { db } from '../../../../lib/db';
 import { ChatMessage } from '../../../../lib/types';
 import { getAuthInfoFromCookie } from '../../../../lib/auth';
 
+export const runtime = 'edge';
+
 export async function GET(request: NextRequest) {
   try {
     const authInfo = getAuthInfoFromCookie(request);

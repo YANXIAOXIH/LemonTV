@@ -157,6 +157,24 @@ services:
       - UPSTASH_URL=上面 https 开头的 HTTPS ENDPOINT
       - UPSTASH_TOKEN=上面的 TOKEN
 ```
+### Cloudflare Pages 部署
+
+1.  **Fork 本仓库**: 点击仓库右上角的 "Fork" 按钮，将此项目复制到您自己的 GitHub 账号下。
+
+2.  **配置构建和部署**:
+    *   **兼容性标志**: 选择 `nodejs_compat`
+    *   **构建命令**: `pnpm install --frozen-lockfile && pnpm run pages:build` 
+    *   **构建输出目录**: `.vercel/output/static`
+    *   **D1 数据库绑定**: `DB`
+
+3.  **添加环境变量**:
+    *   在 "环境变量" 部分，点击 "添加变量"。
+    *   至少需要添加以下变量以启用 **Cloudflare D1** 数据库：
+        *   `USERNAME`: 您的管理员用户名 (例如 `admin`)。
+        *   `PASSWORD`: 您的管理员密码 (设置一个强密码)。
+        *   `NEXT_PUBLIC_STORAGE_TYPE`: 值固定为 `d1`。
+
+4.  **执行 SQL 初始化**: 复制 `src/lib/d1.db.sql` 文件中的内容
 
 ## 配置文件
 

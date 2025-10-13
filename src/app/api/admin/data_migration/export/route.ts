@@ -1,17 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,no-console */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { promisify } from 'util';
-import { gzip } from 'zlib';
+/* import { promisify } from 'util'; */
+/* import { gzip } from 'zlib'; */
+
+import { gzip } from 'pako';
 
 import { getAuthInfoFromCookie } from '@/lib/auth';
 import { SimpleCrypto } from '@/lib/crypto';
 import { db } from '@/lib/db';
 import { CURRENT_VERSION } from '@/lib/version';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
-const gzipAsync = promisify(gzip);
+/* const gzipAsync = promisify(gzip); */
 
 export async function POST(req: NextRequest) {
   try {
@@ -89,10 +91,11 @@ export async function POST(req: NextRequest) {
     const jsonData = JSON.stringify(exportData);
 
     // 先压缩数据
-    const compressedData = await gzipAsync(jsonData);
+    const compressedData = gzip(jsonData);
 
     // 使用提供的密码加密压缩后的数据
-    const encryptedData = SimpleCrypto.encrypt(compressedData.toString('base64'), password);
+    const base64CompressedData = btoa(String.fromCharCode.apply(null, Array.from(compressedData)));
+    const encryptedData = SimpleCrypto.encrypt(base64CompressedData, password);
 
     // 生成文件名
     const now = new Date();

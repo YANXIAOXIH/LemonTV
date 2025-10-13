@@ -2,6 +2,7 @@
 
 import { AdminConfig } from './admin.types';
 import { KvrocksStorage } from './kvrocks.db';
+import { D1Storage } from './d1.db';
 import { RedisStorage } from './redis.db';
 import { Favorite, IStorage, PlayRecord, SkipConfig, ChatMessage, Conversation, Friend, FriendRequest } from './types';
 import { UpstashRedisStorage } from './upstash.db';
@@ -13,6 +14,7 @@ const STORAGE_TYPE =
     | 'redis'
     | 'upstash'
     | 'kvrocks'
+    | 'd1'
     | undefined) || 'localstorage';
 
 // 简化的内存存储实现（用于localstorage模式）
@@ -267,6 +269,8 @@ function createStorage(): IStorage {
       return new UpstashRedisStorage();
     case 'kvrocks':
       return new KvrocksStorage();
+    case 'd1':
+      return new D1Storage();
     case 'localstorage':
     default:
       console.log('使用内存存储模式（用于开发和测试）');

@@ -1,8 +1,8 @@
 // /* eslint-disable no-console */
 
 // import { NextResponse } from "next/server";
-
-// export const runtime = 'nodejs';
+export const runtime = 'edge';
+// export const runtime = 'edge';
 
 // // 测试视频URL的可达性，用于调试403问题
 // export async function GET(request: Request) {

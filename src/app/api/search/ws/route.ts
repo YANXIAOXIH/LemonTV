@@ -59,7 +59,7 @@ async function searchShortDrama(query: string, page = 1, limit = 20): Promise<an
   }
 }
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
   const authInfo = getAuthInfoFromCookie(request);

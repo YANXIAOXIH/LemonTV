@@ -19,6 +19,8 @@ import SearchResultFilter, { SearchFilterCategory } from '@/components/SearchRes
 import SearchSuggestions from '@/components/SearchSuggestions';
 import VideoCard, { VideoCardHandle } from '@/components/VideoCard';
 
+export const runtime = 'edge';
+
 function SearchPageClient() {
   // 搜索历史
   const [searchHistory, setSearchHistory] = useState<string[]>([]);

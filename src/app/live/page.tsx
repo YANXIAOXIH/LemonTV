@@ -20,6 +20,8 @@ import { parseCustomTimeFormat } from '@/lib/time';
 import EpgScrollableRow from '@/components/EpgScrollableRow';
 import PageLayout from '@/components/PageLayout';
 
+export const runtime = 'edge';
+
 // 扩展 HTMLVideoElement 类型以支持 hls 属性
 declare global {
   interface HTMLVideoElement {

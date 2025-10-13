@@ -5,6 +5,8 @@ import { AdminConfig } from '@/lib/admin.types';
 import { headers, cookies } from 'next/headers';
 import { getConfig, setCachedConfig, clearCachedConfig } from '@/lib/config';
 
+export const runtime = 'edge';
+
 export async function GET() {
   try {
     // 创建一个模拟的NextRequest对象来使用getAuthInfoFromCookie

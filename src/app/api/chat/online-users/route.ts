@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthInfoFromCookie } from '../../../../lib/auth';
 
+export const runtime = 'edge';
+
 // 从全局对象获取WebSocket实例相关方法
 function getOnlineUsers(): string[] {
   try {

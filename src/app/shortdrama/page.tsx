@@ -15,6 +15,8 @@ import PageLayout from '@/components/PageLayout';
 import ShortDramaSelector from '@/components/ShortDramaSelector';
 import VideoCard from '@/components/VideoCard';
 
+export const runtime = 'edge';
+
 function ShortDramaPageClient() {
   const [shortDramaData, setShortDramaData] = useState<ShortDramaItem[]>([]);
   const [loading, setLoading] = useState(false);

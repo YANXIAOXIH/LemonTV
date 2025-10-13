@@ -50,6 +50,8 @@ import DataMigration from '@/components/DataMigration';
 import ThemeManager from '@/components/ThemeManager';
 import PageLayout from '@/components/PageLayout';
 
+export const runtime = 'edge';
+
 // 统一按钮样式系统
 const buttonStyles = {
   // 主要操作按钮（蓝色）- 用于配置、设置、确认等

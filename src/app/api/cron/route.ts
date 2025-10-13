@@ -8,18 +8,29 @@ import { fetchVideoDetail } from '@/lib/fetchVideoDetail';
 import { refreshLiveChannels } from '@/lib/live';
 import { SearchResult } from '@/lib/types';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
-  console.log(request.url);
+  // 从 NextRequest 中获取 Cloudflare 的执行上下文 (Execution Context)
+  const ctx = (request as any).context?.waitUntil
+    ? (request as any).context
+    : (globalThis as any).context;
+
   try {
     console.log('Cron job triggered:', new Date().toISOString());
 
-    cronJob();
+    // 使用 waitUntil 来确保 cronJob 在后台完成
+    if (ctx?.waitUntil) {
+      ctx.waitUntil(cronJob());
+    } else {
+      // 如果不在 Cloudflare 环境或无法获取 context，则退回到 await 模式
+      console.warn('Execution context with waitUntil not found. Awaiting cron job directly.');
+      await cronJob();
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Cron job executed successfully',
+      message: 'Cron job triggered and is running in the background.',
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

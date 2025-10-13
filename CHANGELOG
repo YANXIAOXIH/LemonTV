@@ -2,8 +2,10 @@
 
 ### Added
 - 添加内置主题，支持用户自定义CSS
+- 添加 Cloudflare D1 数据库支持
 ### Changed
 - 优化搜索页面缓存机制
+- 全面迁移至 Edge Runtime
 ### Fixed
 - 镜像健康检查问题
 - 弹幕功能适配移动端
