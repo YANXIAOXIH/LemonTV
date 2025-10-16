@@ -4,6 +4,7 @@ import { getAuthInfoFromCookie } from '@/lib/auth';
 import { db } from '@/lib/db';
 
 export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 // 获取用户头像
 export async function GET(request: NextRequest) {
@@ -44,20 +45,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { avatar, targetUser } = body;
 
-    if (!avatar) {
-      return NextResponse.json({ error: '头像数据不能为空' }, { status: 400 });
-    }
-
-    // 验证Base64格式
-    if (!avatar.startsWith('data:image/')) {
-      return NextResponse.json({ error: '无效的图片格式' }, { status: 400 });
-    }
-
-    // 检查文件大小（Base64编码后大约增加33%，2MB的限制）
-    const base64Data = avatar.split(',')[1];
-    const sizeInBytes = (base64Data.length * 3) / 4;
-    if (sizeInBytes > 2 * 1024 * 1024) {
-      return NextResponse.json({ error: '图片大小不能超过2MB' }, { status: 400 });
+    if (!avatar || typeof avatar !== 'string') {
+      return NextResponse.json({ error: '头像数据不能为空且必须为字符串' }, { status: 400 });
     }
 
     const userToUpdate = targetUser || authInfo.username;
@@ -71,9 +60,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Permission denied' }, { status: 403 });
     }
 
+    // --- 新的逻辑：区分 Base64 和 URL ---
+    const isBase64 = avatar.startsWith('data:image/');
+    const isUrl = avatar.startsWith('http://') || avatar.startsWith('https://');
+
+    if (isBase64) {
+      // 验证 Base64 格式和大小
+      const base64Data = avatar.split(',')[1];
+      if (!base64Data) {
+        return NextResponse.json({ error: '无效的 Base64 图片格式' }, { status: 400 });
+      }
+      const sizeInBytes = (base64Data.length * 3) / 4;
+      if (sizeInBytes > 2 * 1024 * 1024) { // 2MB 限制
+        return NextResponse.json({ error: '图片大小不能超过2MB' }, { status: 400 });
+      }
+    } else if (isUrl) {
+      // 验证 URL 格式 (一个简单的检查)
+      try {
+        new URL(avatar);
+      } catch (e) {
+        return NextResponse.json({ error: '无效的图片 URL 格式' }, { status: 400 });
+      }
+    } else {
+      // 如果既不是 Base64 也不是 URL，则拒绝
+      return NextResponse.json({ error: '无效的头像数据格式，请提供 Base64 或有效的 URL' }, { status: 400 });
+    }
+
+    // 无论是 Base64 还是 URL，都直接存入数据库
     await db.setUserAvatar(userToUpdate, avatar);
 
-    return NextResponse.json({ success: true, message: '头像上传成功' });
+    return NextResponse.json({ success: true, message: '头像更新成功' });
+
   } catch (error) {
     console.error('上传头像失败:', error);
     return NextResponse.json({ error: '上传头像失败' }, { status: 500 });

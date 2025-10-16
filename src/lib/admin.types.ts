@@ -17,6 +17,7 @@ export interface AdminConfig {
     DisableYellowFilter: boolean;
     FluidSearch: boolean;
     RequireDeviceCode: boolean;
+    EnableChat?: boolean;
     CustomTheme?: {
       selectedTheme: string;
       customCSS: string;

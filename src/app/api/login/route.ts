@@ -139,6 +139,23 @@ export async function POST(req: NextRequest) {
       username === process.env.USERNAME &&
       password === process.env.PASSWORD
     ) {
+
+      // 站长登录成功后，确保其在数据库中存在记录
+      try {
+        const ownerExists = await db.checkUserExist(username);
+        if (!ownerExists) {
+          // 如果站长记录不存在，则创建它
+          // 注意：这里传入的密码是环境变量中的真实密码，因为您的系统架构中，
+          // 站长的密码验证依赖环境变量，所以保持一致性是合理的。
+          // 如果您希望数据库密码与环境变量分离，可以传入一个占位符。
+          await db.registerUser(username, password);
+          console.log(`站长 '${username}' 的数据库记录已自动创建。`);
+        }
+      } catch (dbError) {
+        // 如果数据库操作失败，记录错误但仍然允许登录，因为站长身份不依赖数据库
+        console.error(`为站长 '${username}' 同步数据库记录时出错:`, dbError);
+      }
+
       // 验证成功，设置认证cookie
       const response = NextResponse.json({ ok: true });
       const cookieValue = await generateAuthCookie(

@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
       DisableYellowFilter,
       FluidSearch,
       RequireDeviceCode,
+      EnableChat,
       CustomTheme,
     } = body as {
       SiteName: string;
@@ -53,6 +54,7 @@ export async function POST(request: NextRequest) {
       DisableYellowFilter: boolean;
       FluidSearch: boolean;
       RequireDeviceCode: boolean;
+      EnableChat?: boolean;
       CustomTheme?: {
         selectedTheme: string;
         customCSS: string;
@@ -72,6 +74,7 @@ export async function POST(request: NextRequest) {
       typeof DisableYellowFilter !== 'boolean' ||
       typeof FluidSearch !== 'boolean' ||
       typeof RequireDeviceCode !== 'boolean' ||
+      (EnableChat !== undefined && typeof EnableChat !== 'boolean') ||
       (CustomTheme && (
         typeof CustomTheme.selectedTheme !== 'string' ||
         typeof CustomTheme.customCSS !== 'string'
@@ -106,6 +109,7 @@ export async function POST(request: NextRequest) {
       DisableYellowFilter,
       FluidSearch,
       RequireDeviceCode,
+      EnableChat,
       CustomTheme,
     };
 

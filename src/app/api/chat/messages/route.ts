@@ -5,8 +5,20 @@ import { getAuthInfoFromCookie } from '../../../../lib/auth';
 
 export const runtime = 'edge';
 
+// 辅助函数，用于检查聊天功能是否开启
+async function checkChatEnabled() {
+  const config = await db.getAdminConfig();
+  // 默认为 true，确保在配置不存在时功能可用
+  return config?.SiteConfig?.EnableChat !== false;
+}
+
 export async function GET(request: NextRequest) {
   try {
+    const isChatEnabled = await checkChatEnabled();
+    if (!isChatEnabled) {
+      return NextResponse.json({ error: '聊天功能当前已禁用' }, { status: 403 }); // 403 Forbidden
+    }
+
     const authInfo = getAuthInfoFromCookie(request);
     if (!authInfo || !authInfo.username) {
       console.log('未授权访问消息API:', authInfo);
@@ -71,6 +83,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const isChatEnabled = await checkChatEnabled();
+    if (!isChatEnabled) {
+      return NextResponse.json({ error: '聊天功能当前已禁用' }, { status: 403 });
+    }
+
     const authInfo = getAuthInfoFromCookie(request);
     if (!authInfo || !authInfo.username) {
       return NextResponse.json({ error: '未授权' }, { status: 401 });
@@ -116,6 +133,11 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    const isChatEnabled = await checkChatEnabled();
+    if (!isChatEnabled) {
+      return NextResponse.json({ error: '聊天功能当前已禁用' }, { status: 403 });
+    }
+
     const authInfo = getAuthInfoFromCookie(request);
     if (!authInfo || !authInfo.username) {
       return NextResponse.json({ error: '未授权' }, { status: 401 });

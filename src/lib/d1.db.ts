@@ -562,25 +562,26 @@ export class D1Storage implements IStorage {
   }
 
   // ---------- 用户头像 ----------
+
   async getUserAvatar(userName: string): Promise<string | null> {
     try {
       const db = await this.getDatabase();
       return await db
-        .prepare('SELECT avatar_base64 FROM users WHERE username = ?')
+        .prepare('SELECT avatar FROM users WHERE username = ?') // 修改列名
         .bind(userName)
-        .first('avatar_base64');
+        .first('avatar'); // 修改列名
     } catch (err) {
       console.error('Failed to get user avatar:', err);
       throw err;
     }
   }
 
-  async setUserAvatar(userName: string, avatarBase64: string): Promise<void> {
+  async setUserAvatar(userName: string, avatarData: string): Promise<void> { // 参数名可以改为更通用的
     try {
       const db = await this.getDatabase();
       await db
-        .prepare('UPDATE users SET avatar_base64 = ? WHERE username = ?')
-        .bind(avatarBase64, userName)
+        .prepare('UPDATE users SET avatar = ? WHERE username = ?') // 修改列名
+        .bind(avatarData, userName)
         .run();
     } catch (err) {
       console.error('Failed to set user avatar:', err);
@@ -592,7 +593,7 @@ export class D1Storage implements IStorage {
     try {
       const db = await this.getDatabase();
       await db
-        .prepare('UPDATE users SET avatar_base64 = NULL WHERE username = ?')
+        .prepare('UPDATE users SET avatar = NULL WHERE username = ?') // 修改列名
         .bind(userName)
         .run();
     } catch (err) {

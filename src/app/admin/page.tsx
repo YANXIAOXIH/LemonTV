@@ -500,6 +500,7 @@ interface SiteConfig {
   DisableYellowFilter: boolean;
   FluidSearch: boolean;
   RequireDeviceCode: boolean;
+  EnableChat?: boolean;
 }
 
 // 视频源数据类型
@@ -4066,6 +4067,7 @@ const SiteConfigComponent = ({ config, refreshConfig }: { config: AdminConfig | 
     DisableYellowFilter: false,
     FluidSearch: true,
     RequireDeviceCode: true,
+    EnableChat: true,
   });
 
   // 豆瓣数据源相关状态
@@ -4129,6 +4131,7 @@ const SiteConfigComponent = ({ config, refreshConfig }: { config: AdminConfig | 
         DisableYellowFilter: config.SiteConfig.DisableYellowFilter || false,
         FluidSearch: config.SiteConfig.FluidSearch || true,
         RequireDeviceCode: config.SiteConfig.RequireDeviceCode !== undefined ? config.SiteConfig.RequireDeviceCode : true,
+        EnableChat: config.SiteConfig.EnableChat !== undefined ? config.SiteConfig.EnableChat : true,
       });
     }
   }, [config]);
@@ -4615,6 +4618,39 @@ const SiteConfigComponent = ({ config, refreshConfig }: { config: AdminConfig | 
         </p>
       </div>
 
+      {/* 启用实时聊天 */}
+      <div>
+        <div className='flex items-center justify-between'>
+          <label
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
+            启用实时聊天
+          </label>
+          <button
+            type='button'
+            onClick={() =>
+              setSiteSettings((prev) => ({
+                ...prev,
+                EnableChat: !prev.EnableChat,
+              }))
+            }
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${siteSettings.EnableChat
+              ? buttonStyles.toggleOn
+              : buttonStyles.toggleOff
+              }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full ${buttonStyles.toggleThumb} transition-transform ${siteSettings.EnableChat
+                ? buttonStyles.toggleThumbOn
+                : buttonStyles.toggleThumbOff
+                }`}
+            />
+          </button>
+        </div>
+        <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
+          启用后，用户可以看到聊天按钮并使用实时聊天功能。
+        </p>
+      </div>
 
       {/* 操作按钮 */}
       <div className='flex justify-end'>

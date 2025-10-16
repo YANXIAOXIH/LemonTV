@@ -50,6 +50,8 @@ export const UserMenu: React.FC = () => {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarTab, setAvatarTab] = useState<'upload' | 'url'>('upload');
+  const [avatarUrlInput, setAvatarUrlInput] = useState('');
 
   // 裁剪相关状态
   const [selectedImage, setSelectedImage] = useState<string>('');
@@ -1382,7 +1384,7 @@ export const UserMenu: React.FC = () => {
             <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-gray-900 rounded-xl shadow-xl z-[1001] overflow-hidden'>
               <div className='p-6'>
                 {/* 标题栏 */}
-                <div className='flex items-center justify-between mb-6'>
+                <div className='flex items-center justify-between mb-4'>
                   <h3 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
                     修改头像
                   </h3>
@@ -1395,107 +1397,174 @@ export const UserMenu: React.FC = () => {
                   </button>
                 </div>
 
-                {!showCropper ? (
+                {/* Tab 切换 */}
+                <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
+                  <button onClick={() => setAvatarTab('upload')} className={`px-4 py-2 text-sm font-medium ${avatarTab === 'upload' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                    上传图片
+                  </button>
+                  <button onClick={() => setAvatarTab('url')} className={`px-4 py-2 text-sm font-medium ${avatarTab === 'url' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                    网络图片
+                  </button>
+                </div>
+
+                {/* Tab 内容 */}
+                {avatarTab === 'upload' && (
                   <>
-                    {/* 头像预览 */}
-                    <div className='flex flex-col items-center justify-center gap-6 my-6'>
-                      <div className='w-24 h-24 rounded-full overflow-hidden relative'>
-                        {avatarUrl ? (
-                          <Image
-                            src={avatarUrl}
-                            alt="用户头像"
-                            fill
-                            sizes="96px"
-                            className='object-cover'
-                          />
-                        ) : (
-                          <div className='w-full h-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center'>
-                            <User className='w-12 h-12 text-blue-500 dark:text-blue-400' />
+                    {!showCropper ? (
+                      <>
+                        {/* 头像预览 */}
+                        <div className='flex flex-col items-center justify-center gap-6 my-6'>
+                          <div className='w-24 h-24 rounded-full overflow-hidden relative'>
+                            {avatarUrl ? (
+                              <Image
+                                src={avatarUrl}
+                                alt="用户头像"
+                                fill
+                                sizes="96px"
+                                className='object-cover'
+                              />
+                            ) : (
+                              <div className='w-full h-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center'>
+                                <User className='w-12 h-12 text-blue-500 dark:text-blue-400' />
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
 
-                      {/* 上传按钮 */}
-                      <div>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleAvatarSelected}
-                          disabled={isUploadingAvatar}
-                        />
-                        <button
-                          onClick={handleOpenFileSelector}
-                          disabled={isUploadingAvatar}
-                          className='flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
-                        >
-                          <Upload className='w-4 h-4' />
-                          选择图片
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* 图片裁剪界面 */}
-                    <div className='flex flex-col items-center justify-center gap-4 my-6'>
-                      <div className='w-full max-w-md'>
-                        <ReactCrop
-                          crop={crop}
-                          onChange={(_: PixelCrop, percentCrop: PercentCrop) => setCrop(percentCrop)}
-                          onComplete={(crop: PixelCrop) => setCompletedCrop(crop)}
-                          aspect={1}
-                          circularCrop
-                        >
-                          <img
-                            ref={imageRef}
-                            src={selectedImage}
-                            alt="Crop me"
-                            className="max-w-full max-h-64 object-contain"
-                            onLoad={onImageLoad}
-                          />
-                        </ReactCrop>
-                      </div>
+                          {/* 上传按钮 */}
+                          <div>
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={handleAvatarSelected}
+                              disabled={isUploadingAvatar}
+                            />
+                            <button
+                              onClick={handleOpenFileSelector}
+                              disabled={isUploadingAvatar}
+                              className='flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                            >
+                              <Upload className='w-4 h-4' />
+                              选择图片
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {/* 图片裁剪界面 */}
+                        <div className='flex flex-col items-center justify-center gap-4 my-6'>
+                          <div className='w-full max-w-md'>
+                            <ReactCrop
+                              crop={crop}
+                              onChange={(_: PixelCrop, percentCrop: PercentCrop) => setCrop(percentCrop)}
+                              onComplete={(crop: PixelCrop) => setCompletedCrop(crop)}
+                              aspect={1}
+                              circularCrop
+                            >
+                              <img
+                                ref={imageRef}
+                                src={selectedImage}
+                                alt="Crop me"
+                                className="max-w-full max-h-64 object-contain"
+                                onLoad={onImageLoad}
+                              />
+                            </ReactCrop>
+                          </div>
 
-                      <div className='flex gap-3'>
-                        <button
-                          onClick={() => {
-                            setShowCropper(false);
-                            setSelectedImage('');
-                            setCompletedCrop(undefined);
-                            setCrop({
-                              unit: '%',
-                              width: 80,
-                              height: 80,
-                              x: 10,
-                              y: 10,
-                            });
-                            // 重置文件输入
-                            if (fileInputRef.current) {
-                              fileInputRef.current.value = '';
-                            }
-                          }}
-                          className='px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors'
-                        >
-                          重新选择
-                        </button>
-                        <button
-                          onClick={handleConfirmCrop}
-                          disabled={isUploadingAvatar || !completedCrop}
-                          className='flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
-                        >
-                          <Check className='w-4 h-4' />
-                          {isUploadingAvatar ? '上传中...' : '确认上传'}
-                        </button>
-                      </div>
-                    </div>
+                          <div className='flex gap-3'>
+                            <button
+                              onClick={() => {
+                                setShowCropper(false);
+                                setSelectedImage('');
+                                setCompletedCrop(undefined);
+                                setCrop({
+                                  unit: '%',
+                                  width: 80,
+                                  height: 80,
+                                  x: 10,
+                                  y: 10,
+                                });
+                                // 重置文件输入
+                                if (fileInputRef.current) {
+                                  fileInputRef.current.value = '';
+                                }
+                              }}
+                              className='px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors'
+                            >
+                              重新选择
+                            </button>
+                            <button
+                              onClick={handleConfirmCrop}
+                              disabled={isUploadingAvatar || !completedCrop}
+                              className='flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                            >
+                              <Check className='w-4 h-4' />
+                              {isUploadingAvatar ? '上传中...' : '确认上传'}
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </>
+                )}
+
+                {avatarTab === 'url' && (
+                  <div className="space-y-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      粘贴图片 URL
+                    </label>
+                    <input
+                      type="url"
+                      value={avatarUrlInput}
+                      onChange={(e) => setAvatarUrlInput(e.target.value)}
+                      placeholder="https://example.com/image.png"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={async () => {
+                        if (!authInfo || !authInfo.username) {
+                          showError('无法获取用户信息', '请刷新页面后重试');
+                          return;
+                        }
+
+                        if (!avatarUrlInput.startsWith('http')) {
+                          showError('请输入有效的图片 URL');
+                          return;
+                        }
+                        setIsUploadingAvatar(true);
+                        try {
+                          const response = await fetch('/api/avatar', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ avatar: avatarUrlInput, targetUser: authInfo.username }),
+                          });
+                          if (response.ok) {
+                            setAvatarUrl(avatarUrlInput);
+                            showSuccess('头像更新成功');
+                            handleCloseChangeAvatar();
+                          } else {
+                            const err = await response.json();
+                            showError('更新失败', err.error);
+                          }
+                        } catch (e) {
+                          showError('更新失败', '网络错误');
+                        } finally {
+                          setIsUploadingAvatar(false);
+                        }
+                      }}
+                      disabled={isUploadingAvatar}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50"
+                    >
+                      {isUploadingAvatar ? '保存中...' : '确认保存'}
+                    </button>
+                  </div>
                 )}
 
                 {/* 底部提示 */}
                 <p className='text-xs text-gray-500 dark:text-gray-400 text-center mt-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
-                  支持 JPG、PNG、GIF 等格式，文件大小不超过 2MB
+                  {avatarTab === 'upload' ? '支持 JPG、PNG 等格式，文件大小不超过 2MB' : '请确保链接可公开访问'}
                 </p>
               </div>
             </div>
