@@ -13,6 +13,7 @@ export enum UpdateStatus {
 
 // 远程版本检查URL配置
 const VERSION_CHECK_URLS = [
+  'https://github.yxxi.dpdns.org/https://raw.githubusercontent.com/YANXIAOXIH/LemonTV/refs/heads/main/VERSION.txt',
   'https://raw.githubusercontent.com/YANXIAOXIH/LemonTV/refs/heads/main/VERSION.txt',
   'https://raw.githubusercontent.com/djteang/OrangeTV/refs/heads/main/VERSION.txt',
 ];
